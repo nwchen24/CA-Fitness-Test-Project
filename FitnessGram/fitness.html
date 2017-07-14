@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+	<title>California FitnessGram Map</title>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script src="CA_county.json"></script>
+
+	<script type="text/javascript" src="http://use.typekit.com/brf5jpj.js"></script>
+	<script src="//use.typekit.net/drk2sev.js"></script>
+
+	<style type="text/css" src="fitness_ca.css"></style>
+
+</head>
+
+<body>
+
+	<!-- Add page elements here -->
+
+	<div id="map">
+
+		<h1> FitnessGram Data </h1>
+	</div>
+
+	<div id="zoom" class="hidden">
+		<p>County: <span id="county">County Name</span></p>
+	</div>
+
+
+	<script type="text/javascript">
+		// Width and height of visualization
+		var width = 800
+		var height = 1100
+
+		// Create SVG
+		var svg = d3.select("#map")
+			.append("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+		// Append empty placeholder "g" to SVG
+		// "g" contains geometry elements
+		var g = svg.append("g");
+
+		// Set projection parameters to focus on CA
+		// Takes in a projection of the globe and generates map of California
+		var CAprojection = d3.geoAlbers()
+			// sets the latitude
+			.center([ -120, 37 ])
+			// pixel offset to ensure the center of projection is center of viewing area
+			.translate([ width/2, height/2 ])
+			// scale of the map, with 1 being the smallest and the bigger the number, the more zoom
+			.scale([ width*3.3 ]);
+			// can use .rotate() to set longitude of origin
+
+		//Creates GeoPath function to use built-in D3 functionality to turn latitude/longitude coordinates to screen coordinates
+		//Takes in projection, returns SVG path string that gets drawn onto screen
+		var path = d3.geoPath()
+			.projection(CAprojection);
+
+
+		// WTF IS GOING ON WITH THE JSON FILE
+
+		//Bind data
+		d3.json("CA_county.json", function(json) {
+			console.log(json);
+			g.selectAll("path")
+				.data(json.features)
+				.enter()
+				.append("path")
+				.attr("fill", "#ccc")
+				.attr("stroke", "#333")
+				.attr("d", path);
+		});
+
+		//Load in counties from json file with the mouseover feature to show county name
+		d3.json("CA_county.json", function(json) {
+				console.log(json);
+				//Bind data and create one path per GeoJSON feature
+				svg.selectAll("path")
+					.data(json.features)
+					.enter()
+					.append("path")
+					.attr("d", path)
+				   	.on("mouseover", function(d){
+						var xPosition = width/2 + 150;
+						var yPosition = height/2;
+// 						var xPosition = parseFloat(path.centroid(this).attr("cx"));
+// 						var yPosition = parseFloat(path.centroid(this).attr("cy"));
+						d3.select("#tooltip")
+						.style("left", xPosition + "px")
+						.style("top", yPosition + "px");
+						d3.select("#county")
+						.text(d.properties.NAME);
+						d3.select("#tooltip")
+						.classed("hidden", false);
+						})
+						.on("mouseout", function(){
+						d3.select("#tooltip").classed("hidden", true);
+						});
+		
+			});
+
+	</script>
+
+</body>
+
+</html>
