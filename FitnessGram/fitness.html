@@ -53,11 +53,11 @@
 		// Takes in a projection of the globe and generates map of California
 		var CAprojection = d3.geoAlbers()
 			// sets the latitude
-			.center([ -120, 37 ])
+			.center([ -20, 40 ]) //found by trial and error
 			// pixel offset to ensure the center of projection is center of viewing area
-			.translate([ width/2, height/2 ])
+			// .translate([ -0.6,38.7 ])
 			// scale of the map, with 1 being the smallest and the bigger the number, the more zoom
-			.scale([ width/3.3 ]);
+			.scale( 1070*width/200); //found by trial and error
 			// can use .rotate() to set longitude of origin
 
 		//Creates GeoPath function to use built-in D3 functionality to turn latitude/longitude coordinates to screen coordinates
@@ -71,10 +71,12 @@
 		//Bind data
 		d3.json("CA_county.json", function(err,json) {
 			if (err) throw err;
-
+			var caFeatures = json.features.filter(function (d) {
+				return d.properties.STATEFP==="06"; // The fips code of california
+			})
 			console.log(json);
 			g.selectAll("path")
-				.data(json.features)
+				.data(caFeatures)
 				.enter()
 				.append("path")
 				.attr("fill", "#ccc")
