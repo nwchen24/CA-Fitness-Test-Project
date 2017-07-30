@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+	<title>W209 Final Project</title>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript" src="http://use.typekit.com/brf5jpj.js"></script>
+	<!-- for color -->
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="//use.typekit.net/drk2sev.js"></script>
+	<style type="text/css" src="fitness_ca.css">
+		path:hover {
+		fill-opacity: .9;
+		}
+  
+		h1 {
+	    position: absolute;
+	    left: 20px;
+	    top: 30px;
+	    font-family: "Proxima Nova", Montserrat, sans-serif;
+	    font-size: 2em;
+	    font-weight: 100;
+	    color: #005DAA; /* offical UK Kentucky blue */
+	    }
+		        
+		body {
+			background: whitesmoke;
+		}
+		  
+		svg {
+			position: relative;
+			display: block;
+			margin: auto;
+			top: 150px;
+		}
+
+		div.tooltip {
+		    color: orange;
+		    background-color: #686868;
+		    padding: .5em;
+		    font-size: medium;
+		    border-radius: 2px;
+		    opacity: 0.9;
+		    position: absolute;
+		}
+
+		text.big-text{
+	        position: absolute;
+	        left: 20px;
+	        top: 100px;
+	        font-family: "Proxima Nova", Montserrat, sans-serif;
+	        font-size: 2em;
+	        font-weight: 100;
+	        color: #005DAA; 
+    	}
+	</style>
+
+</head>
+
+
+<body>
+
+	<!-- the h1 shouldn't go inside the div -->
+	<h1> California 9th Grade Standardized Testing</h1>
+	<div id="map">
+	</div>
+
+	<div id="zoom" class="hidden">
+		<!-- <p>County: <span id="county">County Name</span></p> -->
+	</div>
+
+	<script type="text/javascript">
+
+		// Width and height 
+		var width = 850
+		var height = 1100;
+
+
+		// DEFINE MAP PROJECTION ON CA
+		var CAprojection = d3.geoAlbers()
+			.center([ -22, 40 ]) 	// sets the latitude
+			.scale( 1300*width/200) //scale down to see entire CA
+			.rotate([106,3,10.5]);	// longitude, latitude, roll
+
+		//	DEFINE MAP GENERATOR
+		var path = d3.geoPath()		//path generator converts GeoJSON to SVG path
+			.projection(CAprojection); 		// tells path generator to use geoAlbers
+
+
+		// Define color
+		var color_by = "academic_wght_avg_score_All";
+
+		// CREATE SVG ELEMENT
+		var svg = d3.select("#map")
+			.append("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+
+		var tooltip = d3.select('#map').append('div')
+			.attr('class', 'hidden tooltip');
+
+		// "g" contains geometry elements
+		var g = svg.append("g");
+
+		// "s" contains on-click scatterplots
+		var s = svg.append("g")
+			.attr("id", "scatterplots");
+
+
+		// Load FitnessGram file
+		d3.csv("Academic_county.csv", function(data) {
+			console.log(data);
+			data.forEach(function(d) {
+				// d["County_num"] = +d["Num"]
+				d["County_Code"] = +d["County_Code"];
+				d["academic_wght_avg_score_All"] = +d["academic_wght_avg_score_All"]
+				d["County"] = +["County"]
+			});
+		  
+  
+		// Load GeoJSON data
+		d3.json("CA_county.json", function(err,json) {
+			if (err) throw err;
+			var caFeatures = json.features.filter(function (d) {
+				return d.properties.STATEFP==="06"; // The fips code of california
+			})
+			//console.log(json);
+
+			// Loop through each county's data value in the .csv file
+			for (var i = 0; i < data.length; i++) {
+  			//console.log("i", i, data[i][color_by]);
+
+				// Grab County Name
+				var dataCounty = data[i].County_Code;
+  				var dataFitness = data[i][color_by];
+
+				// Find the corresponding county inside the GeoJSON
+				for (var j = 0; j < caFeatures.length; j++)  {
+					var jsonCounty = caFeatures[j].properties.COUNTYFP;
+   			 		//console.log(jsonState);
+
+					if (dataCounty == jsonCounty) {
+						// Copy the data value into the JSON
+						caFeatures[j].properties.cases = dataFitness;
+      					//console.log(jsonState,json.features[j].properties.cases);
+						// Stop looking through the JSON
+						break;
+					}
+				}
+			}
+
+
+			// FUNCTIONS
+			// County color based on value
+			function countyFill(d) {
+				var value = d.properties.cases;
+				// Color county based on data values
+				if (value && color(value)) {
+					return color(value);
+				} else {
+					return "white";
+				}
+			}
+
+			// Define County:Value text
+			var bigText = d3.select("#map").append('text')
+  				.classed('big-text', true);
+
+			// Get County name
+			function countyName(d){
+				console.log(d.properties.NAME + ": " + d.properties.cases)
+				return d.properties.NAME + ": " + d.properties.cases;
+			}
+
+			// Mouseover function - highlights county
+			function mOver(d){
+		  		d3.select(this).style('fill', '#9900ff');
+  				bigText.text(countyName(d));
+			}
+
+			// Mouseout function - returns county back to color
+			function mOut(d){
+				d3.select(this).style("fill", countyFill(d));
+				// Reset county color
+				svg.select(this)
+			    	.style('fill', countyFill(d));
+				//bigText.text('');
+				if (centered) {
+			    	bigText.text(countyName(centered));
+				} else {
+			    	bigText.text('');
+				}
+			}
+
+			// Click function - saved for scatterplots
+			function mClick(d){
+
+			}
+
+
+			// Create legend
+			var color = d3.scaleThreshold()
+		    	.domain([250, 275, 300, 325, 350, 375])
+		    	.range(d3.schemePiYG[10]);
+
+			var x = d3.scaleSqrt()
+		    	.domain([250, 400])
+		    	.rangeRound([100, 600]);
+
+			var g = svg.append("g")
+			    .attr("class", "key")
+			    .attr("transform", "translate(0,30)");
+
+			g.selectAll("rect")
+			  .data(color.range().map(function(d) {
+			      color_range = color.invertExtent(d);
+			      console.log(color_range);
+			      if (color_range[0] == null) color_range[0] = x.domain()[0];
+			      if (color_range[1] == null) color_range[1] = x.domain()[1];
+			      return color_range;
+			    }))
+			  .enter().append("rect")
+			    .attr("height", 8)
+			    .attr("x", function(d) { return x(color_range[0]); })
+			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
+			    .attr("fill", function(d) { return color(color_range[0]); });
+
+			g.append("text")
+			    .attr("class", "caption")
+			    .attr("x", x.range()[0])
+			    .attr("y", -6)
+			    .attr("fill", "#000")
+			    .attr("text-anchor", "start")
+			    .attr("font-weight", "bold")
+			    .text("Standardized Testing Scores");
+
+			g.call(d3.axisBottom(x)
+			    .tickSize(13)
+			    .tickValues(color.domain()))
+			  	.select(".domain")
+			    .remove();
+			 // End of legend block
+
+
+			// Bind the data to the SVG and create one path per GeoJSON feature
+			svg.selectAll("path")
+				.data(caFeatures)
+				.enter()
+				.append("path")
+				.attr("d", path)
+				.style("stroke", "#353535")
+				.style("stroke-width", "1")
+				.style("fill", countyFill)
+				.on("mouseover", mOver)
+				.on("mouseout", mOut)
+
+
+
+
+ 
+		});
+}); 
+	
+
+
+
+	</script>
+
+</body>
+
+</html>

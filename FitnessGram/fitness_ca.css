@@ -5,7 +5,7 @@ path:hover {
   h1 {
     text-align: center;
   	font-size: xx-large;  
-		font-family: 'Gruppo', cursive;
+	font-family: 'Gruppo', cursive;
   }
         
   body {
@@ -26,6 +26,16 @@ path:hover {
     opacity: 0.9;
     position: absolute;
    }
+
+  text.big-text{
+	font-size: 40px;
+	font-weight: 400;
+	position:absolute;
+	top: 60px;
+	left: 20px;
+	z-index:99;
+	float:left;
+	}
 
 
 
