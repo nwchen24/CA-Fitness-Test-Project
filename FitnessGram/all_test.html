@@ -105,10 +105,6 @@
 		// "g" contains geometry elements
 		var g = svg.append("g");
 
-		// "s" contains on-click scatterplots
-		var s = svg.append("g")
-			.attr("id", "scatterplots");
-
 
 		// Load FitnessGram file
 		d3.csv("Academic_county.csv", function(data) {
@@ -204,20 +200,20 @@
 			// Create legend
 			var color = d3.scaleThreshold()
 		    	.domain([250, 275, 300, 325, 350, 375])
-		    	.range(d3.schemePiYG[10]);
+		    	//.range(d3.schemePiYG[10]);
+		    	.range(d3.schemeOrRd[9]);
 
 			var x = d3.scaleSqrt()
 		    	.domain([250, 400])
-		    	.rangeRound([100, 600]);
+		    	.rangeRound([50, 500]);
 
-			var g = svg.append("g")
+			var legend = svg.append("g")
 			    .attr("class", "key")
 			    .attr("transform", "translate(0,30)");
 
-			g.selectAll("rect")
+			legend.selectAll("rect")
 			  .data(color.range().map(function(d) {
 			      color_range = color.invertExtent(d);
-			      console.log(color_range);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
 			      if (color_range[1] == null) color_range[1] = x.domain()[1];
 			      return color_range;
@@ -228,7 +224,7 @@
 			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
 			    .attr("fill", function(d) { return color(color_range[0]); });
 
-			g.append("text")
+			legend.append("text")
 			    .attr("class", "caption")
 			    .attr("x", x.range()[0])
 			    .attr("y", -6)
@@ -237,7 +233,7 @@
 			    .attr("font-weight", "bold")
 			    .text("Standardized Testing Scores");
 
-			g.call(d3.axisBottom(x)
+			legend.call(d3.axisBottom(x)
 			    .tickSize(13)
 			    .tickValues(color.domain()))
 			  	.select(".domain")
@@ -256,9 +252,6 @@
 				.style("fill", countyFill)
 				.on("mouseover", mOver)
 				.on("mouseout", mOut)
-
-
-
 
  
 		});
