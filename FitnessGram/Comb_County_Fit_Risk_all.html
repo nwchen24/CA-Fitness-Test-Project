@@ -63,7 +63,7 @@
 <body>
 
 	<!-- the h1 shouldn't go inside the div -->
-	<h1> California 9th Grade Standardized Testing</h1>
+	<h1> California 9th Grade FitnessGram Percentages for All Students in At Risk Fitness Zones</h1>
 	<div id="map">
 	</div>
 
@@ -90,7 +90,7 @@
 
 
 		// Define color
-		var color_by = "academic_wght_avg_score_All";
+		var color_by = "fitness_pct_risk_all";
 
 		// CREATE SVG ELEMENT
 		var svg = d3.select("#map")
@@ -106,13 +106,13 @@
 		var g = svg.append("g");
 
 
-		// Load FitnessGram file
-		d3.csv("Academic_county.csv", function(data) {
+		// Load Test file
+		d3.csv("Comb_County_Fit_Risk_all.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
 				// d["County_num"] = +d["Num"]
 				d["County_Code"] = +d["County_Code"];
-				d["academic_wght_avg_score_All"] = +d["academic_wght_avg_score_All"]
+				d["fitness_pct_risk_all"] = +d["fitness_pct_risk_all"]
 				d["County"] = +["County"]
 			});
 		  
@@ -192,19 +192,19 @@
 			}
 
 			// Click function - saved for scatterplots
-			function mClick(d){
+			// function mClick(d){
 
-			}
+			// }
 
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain([250, 275, 300, 325, 350, 375])
+		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
 		    	//.range(d3.schemePiYG[10]);
 		    	.range(d3.schemeYlGnBu[9]);
 
 			var x = d3.scaleSqrt()
-		    	.domain([250, 400])
+		    	.domain([0,1])
 		    	.rangeRound([50, 500]);
 
 			var legend = svg.append("g")
