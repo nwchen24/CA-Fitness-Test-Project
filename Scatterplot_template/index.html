@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+
+<!-- example tutorial saved here: http://bl.ocks.org/curran/8ac62d283a7aa6e95de8 -->
+
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>D3 Example</title>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=Crimson Text' rel='stylesheet' type='text/css'>
+    <style>
+
+    /*Change the style of the bar labels*/
+     .axis text {
+      	fill: #808080;
+        font-family: 'Crimson Text';
+        font-size: 16pt;
+     }
+
+     /*Change the style of the x axis label*/
+     .axis.label {
+      	fill: #808080;
+        font-size: 16pt;
+     }
+
+     .axis path, .axis line {
+        fill: none;
+        stroke: #808080;
+        shape-rendering: crispEdges;
+     }
+     .y.axis path, .y.axis line {
+        stroke: none;
+     }
+
+    .toolTip {
+        font-family: "Crimson Text";
+        position: absolute;
+        display: none;
+        width: auto;
+        height: auto;
+        background: none repeat scroll 0 0 white;
+        border: 0 none;
+        border-radius: 8px 8px 8px 8px;
+        box-shadow: -3px 3px 15px #888888;
+        color: black;
+        font: 12px sans-serif;
+        padding: 5px;
+        text-align: center;
+    }
+
+	/*Set style of the headings*/
+     h1 {
+   text-align: center;
+   width: 960px;
+   color: #808080;
+   font-family: 'Crimson Text';
+   font-size:20pt;
+ 		}
+
+     h2 {
+   text-align: center;
+   width: 960px;
+   color: #808080;
+   font-family: 'Crimson Text';
+ 		}
+
+    p {
+
+      width: 960px;
+      color: #808080;
+      font-family: 'Crimson Text';
+    }
+
+
+    </style>
+  </head>
+
+<h1>Fitness X Academic Achievement Scatterplot</h1>
+
+    <script src=js/scatterplot_1.2.js>
+
+      
+    </script>
+
+
+    <!-- add a caption -->
+    <p>This scatterplot plots standardized fitness test results against standardized test scores for high schools in Alameda County, California. Fitness scores show the percentage of students deemed to be in 'Need Improvement' fitness zones.</p>
+  </body>
+</html>
