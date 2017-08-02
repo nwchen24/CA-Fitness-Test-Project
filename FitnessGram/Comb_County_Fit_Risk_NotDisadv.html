@@ -165,6 +165,13 @@
 			var bigText = d3.select("#map").append('text')
   				.classed('big-text', true);
 
+  			// County variable - for Nick
+  			// function bigText(d) {
+  			// 	var bigText = d.properties.NAME
+  			// 	return bigText;
+  			// } 
+
+
 			// Get County name
 			function countyName(d){
 				console.log(d.properties.NAME + ": " + d.properties.cases)
@@ -191,7 +198,7 @@
 				}
 			}
 
-			// Click function - saved for scatterplots
+			// Click function - saved for scatterplots for Nick
 			// function mClick(d){
 
 			// }
@@ -252,6 +259,7 @@
 				.style("fill", countyFill)
 				.on("mouseover", mOver)
 				.on("mouseout", mOut)
+				//.on("onclick", mClick)
 
  
 		});
