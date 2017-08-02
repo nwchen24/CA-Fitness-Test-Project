@@ -20,8 +20,8 @@ var yAxis = d3.svg.axis()
     .orient("left");
 
 // Set variables for filtering the plot
-var County_Input = "Santa Barbara";
-var Economic_disadv_flag = "Disadvantaged"
+var County_Input = "Alameda";
+var Economic_disadv_flag = "Disadvantaged";
 
 // Mouseover functionality - Text displayed will be defined below 
 // How to change font, make solid fill, border color
