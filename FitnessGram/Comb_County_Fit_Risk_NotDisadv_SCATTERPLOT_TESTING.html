@@ -14,7 +14,7 @@
 		path:hover {
 		fill-opacity: .9;
 		}
-  
+
 		h1 {
 	    position: absolute;
 	    left: 20px;
@@ -24,11 +24,11 @@
 	    font-weight: 100;
 	    color: #005DAA; /* offical UK Kentucky blue */
 	    }
-		        
+
 		body {
 			background: whitesmoke;
 		}
-		  
+
 		svg {
 			position: relative;
 			display: block;
@@ -53,7 +53,7 @@
 	        font-family: "Proxima Nova", Montserrat, sans-serif;
 	        font-size: 2em;
 	        font-weight: 100;
-	        color: #005DAA; 
+	        color: #005DAA;
     	}
 	</style>
 
@@ -78,7 +78,7 @@
 
 	<script type="text/javascript">
 
-		// Width and height 
+		// Width and height
 		var width = 850
 		var height = 1100;
 
@@ -150,7 +150,7 @@
 		var County_Input = "Alameda";
 		var Economic_disadv_flag = "All";
 
-		// Mouseover functionality - Text displayed will be defined below 
+		// Mouseover functionality - Text displayed will be defined below
 		// How to change font, make solid fill, border color
 		var tip_test = d3.select('body')
 		  .append('div')
@@ -176,8 +176,8 @@
 				d["fitness_pct_Risk_NOT_economic_disadv"] = +d["fitness_pct_Risk_NOT_economic_disadv"]
 				d["County"] = +["County"]
 			});
-		  
-  
+
+
 		// Load GeoJSON data
 		d3.json("CA_county.json", function(err,json) {
 			if (err) throw err;
@@ -230,7 +230,7 @@
   			function bigText(d) {
   				var bigText = d.properties.NAME
   				return bigText;
-  			} 
+  			}
 
 
 			// Get County name
@@ -267,7 +267,7 @@
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
+		    	.domain(d3.range(0, 1, 1/9)) // John: You need an array with 9 elements
 		    	//.range(d3.schemePiYG[10]);
 		    	.range(d3.schemeYlGnBu[9]);
 
@@ -279,18 +279,19 @@
 			    .attr("class", "key")
 			    .attr("transform", "translate(0,30)");
 
-			legend.selectAll("rect")
+			legend.selectAll(".legendBox")
 			  .data(color.range().map(function(d) {
-			      color_range = color.invertExtent(d);
+			      var color_range = color.invertExtent(d); // John: Declare your variables!!!
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
 			      if (color_range[1] == null) color_range[1] = x.domain()[1];
 			      return color_range;
 			    }))
 			  .enter().append("rect")
+          .attr("class", "legendBox")
 			    .attr("height", 8)
-			    .attr("x", function(d) { return x(color_range[0]); })
-			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
-			    .attr("fill", function(d) { return color(color_range[0]); });
+			    .attr("x", function(d) { return x(d[0]); }) // John: color_range shouldn't exist here, you were using the last value established by the previous function on line 283
+			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+			    .attr("fill", function(d) { return color(d[0]); });
 
 			legend.append("text")
 			    .attr("class", "caption")
@@ -322,10 +323,10 @@
 				.on("mouseout", mOut)
 				//.on("onclick", mClick)
 
- 
+
 		});
 
-}); 
+});
 
 // ********************************************
 // NC scatterplot code
@@ -369,12 +370,12 @@ d3.csv("School Level for Scatterplots.csv", function(error, data2) {
 
   // Plot points
   svg2.selectAll(".dot")
-      .data(data2.filter(function(d2){ 
+      .data(data2.filter(function(d2){
         if (d2.County == County_Input) {return d2 }; })) // show only data for selected county
       .enter().append("circle")
       .attr("class", "dot")
       .attr("r", 3.5)
-      .attr("cx", function(d2) { 
+      .attr("cx", function(d2) {
         if (Economic_disadv_flag == "All")
             {return x2(d2.Combined_Fitness_Unhealthy_Pct_All)}
         else if (Economic_disadv_flag == "Disadvantaged")
