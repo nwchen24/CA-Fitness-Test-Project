@@ -90,7 +90,7 @@
 
 
 		// Define color
-		var color_by = "academic_wght_avg_score_Economic_disadv";
+		var color_by = "academic_wght_avg_score_All";
 
 		// CREATE SVG ELEMENT
 		var svg = d3.select("#map")
@@ -107,13 +107,19 @@
 
 
 		// Load Test file
-		d3.csv("Comb_County_Acad_Disadv.csv", function(data) {
+		d3.csv("Comb_County_Acad_all.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
-				// d["County_num"] = +d["Num"]
 				d["County_Code"] = +d["County_Code"];
-				d["academic_wght_avg_score_Economic_disadv"] = +d["academic_wght_avg_score_Economic_disadv"]
+				d["academic_wght_avg_score_All"] = +d["academic_wght_avg_score_All"]
 				d["County"] = +["County"]
+			})
+			// create max and min values to use for legend colors
+			var max_color = d3.max(data, function(d){
+				return +d["academic_wght_avg_score_All"];
+			})
+			var min_color = d3.min(data, function(d){
+				return +d["academic_wght_avg_score_All"];
 			});
 		  
   
@@ -131,7 +137,7 @@
 
 				// Grab County Name
 				var dataCounty = data[i].County_Code;
-  				var dataFitness = data[i][color_by];
+  				var dataColor = data[i][color_by];
 
 				// Find the corresponding county inside the GeoJSON
 				for (var j = 0; j < caFeatures.length; j++)  {
@@ -140,7 +146,7 @@
 
 					if (dataCounty == jsonCounty) {
 						// Copy the data value into the JSON
-						caFeatures[j].properties.cases = dataFitness;
+						caFeatures[j].properties.cases = dataColor;
       					//console.log(jsonState,json.features[j].properties.cases);
 						// Stop looking through the JSON
 						break;
@@ -191,21 +197,15 @@
 				}
 			}
 
-			// Click function - saved for scatterplots
-			// function mClick(d){
-
-			// }
-
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain([250, 275, 300, 325, 350, 375])
-		    	//.range(d3.schemePiYG[10]);
-		    	.range(d3.schemeYlGnBu[9]);
+		    	.domain(d3.range(300, max_color, (max_color-300)/4))
+		    	.range(d3.schemeYlGnBu[4]);
 
 			var x = d3.scaleSqrt()
-		    	.domain([250, 400])
-		    	.rangeRound([50, 500]);
+		    	.domain([300, max_color])
+		    	.rangeRound([50, max_color]);
 
 			var legend = svg.append("g")
 			    .attr("class", "key")
@@ -213,16 +213,16 @@
 
 			legend.selectAll("rect")
 			  .data(color.range().map(function(d) {
-			      color_range = color.invertExtent(d);
+			      var color_range = color.invertExtent(d);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
 			      if (color_range[1] == null) color_range[1] = x.domain()[1];
 			      return color_range;
 			    }))
 			  .enter().append("rect")
 			    .attr("height", 8)
-			    .attr("x", function(d) { return x(color_range[0]); })
-			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
-			    .attr("fill", function(d) { return color(color_range[0]); });
+			    .attr("x", function(d) { return x(d[0]); })
+			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+			    .attr("fill", function(d) { return color(d[0]); });
 
 			legend.append("text")
 			    .attr("class", "caption")
