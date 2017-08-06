@@ -48,13 +48,26 @@
 
 		text.big-text{
 	        position: absolute;
-	        left: 20px;
-	        top: 100px;
+	        left: 20px; /* ADJUSTMENT: horizontal position of the county name created on mouseover*/
+	        top: 55px; /* ADJUSTMENT: vertical position of the county name created on mouseover*/
 	        font-family: "Proxima Nova", Montserrat, sans-serif;
 	        font-size: 2em;
 	        font-weight: 100;
 	        color: #005DAA; 
     	}
+
+		/*=========================================================================*/
+    	#scatterplot_title_div{
+	        position: absolute;
+	        left: 900px; /* ADJUSTMENT: horizontal position of scatterplot title*/
+	        top: 225px; /* ADJUSTMENT: vertical position of scatterplot title*/
+	        font-family: "Proxima Nova", Montserrat, sans-serif;
+	        font-size: 2em;
+	        font-weight: 100;
+	        color: #005DAA; 
+    	}
+		/*=========================================================================*/
+
 	</style>
 
 </head>
@@ -64,16 +77,25 @@
 
 	<!-- the h1 shouldn't go inside the div -->
 	<h1> California 9th Grade FitnessGram Percentages for Non-disadvantaged Students in At Risk Fitness Zones</h1>
-	<div id="map" style="float:left;">  <!-- float:left moved the div to the left hand side of the screen -->
+	<!-- <div id="map" style="float:left;">  float:left moved the div to the left hand side of the screen -->
+	<div id="map" style="position:absolute; top:100px">
 	</div>
 
 	<div id="zoom" class="hidden">
 		<!-- <p>County: <span id="county">County Name</span></p> -->
 	</div>
 
-	<!-- NC added -->
-	<div id="scatterplot" style="margin-top:00px">
+	<!-- ========================================================================= -->
+	<!-- Scatterplot div -->
+	<!-- <div id="scatterplot" style="margin-top:00px"> -->
+	<div id="scatterplot" style="position:absolute; top:0px; left:600px;">
 	</div>
+
+
+ 	<div id="scatterplot_title_div">
+ 	</div>
+
+	<!-- ========================================================================= -->
 
 
 	<script type="text/javascript">
@@ -110,8 +132,14 @@
 		// "g" contains geometry elements
 		var g = svg.append("g");
 
-		// ********************************************
+		// =========================================================================
 		// vars for scatterplots
+		// =========================================================================
+
+		// Set variable for filtering the plot to show all, disadvantaged, or NOT disadvantaged students
+		// Options are: [All,  Disadvantaged, Not Disadvantaged], anything else will default to Not Disadvantaged
+		var Economic_disadv_flag = "All";
+
 
 		// Original values: width2: 960, height2: 500
 		var margin2 = {top: 220, right: 50, bottom: 80, left: 90},
@@ -136,17 +164,10 @@
 
 		var yAxis = d3.axisLeft(y2);
 
-		// ********************************************************
-		// Adjustment for other charts
-		// ********************************************************
-
-		// Set variables for filtering the plot
-		// Options are: [All,  Disadvantaged], anything else will default to Not Disadvantaged
-		var Economic_disadv_flag = "All";
 
 		// Mouseover functionality - Text displayed will be defined below 
 		// How to change font, make solid fill, border color
-		var tip_test = d3.select('body')
+		var tip_scatter = d3.select('body')
 		  .append('div')
 		  .attr('class', 'tip')
 		  .style('border', '1px solid black')
@@ -160,6 +181,18 @@
 		    tip.style('display', 'none');
 		  })
 		  ;
+
+
+		// Define County:Value text
+		var scatterTitle = d3.select("#scatterplot_title_div").append('text')
+				.classed('scatterplot-title', true);
+
+
+		// =========================================================================
+
+		// ********************************************************
+		// Adjustment for other charts
+		// ********************************************************
 
 		// Load Test file
 		d3.csv("Comb_County_Fit_Risk_NotDisadv.csv", function(data) {
@@ -220,11 +253,6 @@
 			var bigText = d3.select("#map").append('text')
   				.classed('big-text', true);
 
-  			// County variable - for Nick
-  			function bigText(d) {
-  				var bigText = d.properties.NAME
-  				return bigText;
-  			} 
 
 
 			// Get County name
@@ -253,9 +281,11 @@
 				}
 			}
 
-			// Click function - saved for scatterplots for Nick
-			// Try inserting scatterplot code into the mClick function. See v 1.1b for working scatterplot code
-			function mClick(d){
+		// =========================================================================
+		// Scatterplot click function
+		// =========================================================================
+
+			function scatterOnClick(d){
 				
 				// This gets the name of the county that was clicked
 				var click_county_input = d.properties.NAME;
@@ -300,11 +330,21 @@
 				  svg2.selectAll(".dot")
 				  	.remove()
 
+				  // Add scatterplot title
+				  d3.select("#scatterplot_title_div")
+				  	.text(click_county_input + " County")
+
+
 				  svg2.selectAll(".dot")
-				  	  //.remove()
+
 				      .data(data2.filter(function(d4){ 
-				        //if (d4.County == County_Input) {return d4 }; })) // show only data for selected county
-				        if (d4.County == click_county_input) {return d4 }; }))
+				        
+				        //filter to show only data for selected counties and remove data error observations where we have negative share of students in unhealthy zones
+				        if (d4.County == click_county_input && Economic_disadv_flag == "All" && d4.Combined_Fitness_Unhealthy_Pct_All > 0 && d4.Combined_Fitness_Unhealthy_Pct_All != "") {return d4}
+				        else if (d4.County == click_county_input && Economic_disadv_flag == "Disadvantaged" && d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv > 0 && d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv != "") {return d4}
+				        else if (d4.County == click_county_input && Economic_disadv_flag == "Not Disadvantaged" && d4.Mean_Academic_Test_Score_NOT_economic_disadv > 0 && d4.Mean_Academic_Test_Score_NOT_economic_disadv != "") {return d4};
+
+				    	}))
 				      .enter().append("circle")
 				      .attr("class", "dot")
 				      .attr("r", 3.5)
@@ -324,14 +364,14 @@
 				            {return y2(d4.Mean_Academic_Test_Score_NOT_economic_disadv)}; })
 				      .style("fill", "A6CFAC")
 				      .on('mouseover', function(d4, i) {
-				        tip_test.transition().duration(0);
-				        tip_test.style("left", 900 + "px");   
-				  		tip_test.style("top", 340 + "px");
-				        tip_test.style('display', 'block');
-				        tip_test.text(d4.School);
+				        tip_scatter.transition().duration(0);
+				        tip_scatter.style("left", 900 + "px"); // Adjust position of the mouseover school name
+				  		tip_scatter.style("top", 240 + "px"); // Adjust position of the mouseover school name
+				        tip_scatter.style('display', 'block');
+				        tip_scatter.text(d4.School);
 				      })
 				        .on('mouseout', function(d4, i) {
-				          tip_test.transition()
+				          tip_scatter.transition()
 				          .delay(10)
 				          .style('display', 'none');
 				        })
@@ -342,6 +382,8 @@
 
 			}
 
+		// =========================================================================
+			
 			// Create legend
 			var color = d3.scaleThreshold()
 		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
@@ -397,20 +439,12 @@
 				.style("fill", countyFill)
 				.on("mouseover", mOver)
 				.on("mouseout", mOut)
-				.on("click", mClick)
+				.on("click", scatterOnClick)
 
  
 		});
 
 }); 
-
-// ********************************************
-// NC scatterplot code
-
-
-
-
-
 
 	</script>
 
