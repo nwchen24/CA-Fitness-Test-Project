@@ -14,7 +14,7 @@
 		path:hover {
 		fill-opacity: .9;
 		}
-
+  
 		h1 {
 	    position: absolute;
 	    left: 20px;
@@ -24,11 +24,11 @@
 	    font-weight: 100;
 	    color: #005DAA; /* offical UK Kentucky blue */
 	    }
-
+		        
 		body {
 			background: whitesmoke;
 		}
-
+		  
 		svg {
 			position: relative;
 			display: block;
@@ -53,7 +53,7 @@
 	        font-family: "Proxima Nova", Montserrat, sans-serif;
 	        font-size: 2em;
 	        font-weight: 100;
-	        color: #005DAA;
+	        color: #005DAA; 
     	}
 	</style>
 
@@ -64,7 +64,7 @@
 
 	<!-- the h1 shouldn't go inside the div -->
 	<h1> California 9th Grade FitnessGram Percentages for Non-disadvantaged Students in At Risk Fitness Zones</h1>
-	<div id="map">
+	<div id="map" style="float:left;">  <!-- float:left moved the div to the left hand side of the screen -->
 	</div>
 
 	<div id="zoom" class="hidden">
@@ -72,21 +72,21 @@
 	</div>
 
 	<!-- NC added -->
-	<div id="scatterplot">
+	<div id="scatterplot" style="margin-top:00px">
 	</div>
 
 
 	<script type="text/javascript">
 
-		// Width and height
-		var width = 850
-		var height = 1100;
+		// Width and height - original values width: 850, height: 1100.
+		var width = 700
+		var height = 905;
 
 
 		// DEFINE MAP PROJECTION ON CA
 		var CAprojection = d3.geoAlbers()
-			.center([ -22, 40 ]) 	// sets the latitude
-			.scale( 1300*width/200) //scale down to see entire CA
+			.center([ -20, 40 ]) 	// sets the latitude, origial value .center([ -22, 40 ]) 
+			.scale( 1066*width/200) //scale down to see entire CA
 			.rotate([106,3,10.5]);	// longitude, latitude, roll
 
 		//	DEFINE MAP GENERATOR
@@ -113,8 +113,9 @@
 		// ********************************************
 		// vars for scatterplots
 
-		var margin2 = {top: 20, right: 50, bottom: 80, left: 90},
-		    width2 = 960 - margin2.left - margin2.right,
+		// Original values: width2: 960, height2: 500
+		var margin2 = {top: 220, right: 50, bottom: 80, left: 90},
+		    width2 = 650 - margin2.left - margin2.right,
 		    height2 = 500 - margin2.top - margin2.bottom;
 
 		//NC create scatterplot svg element
@@ -131,26 +132,19 @@
 		var y2 = d3.scaleLinear()
 		    .range([height2, 0]);
 
-		//Don't think this is actually used.
-		// var color = d3.scale.category10();
-
-		// var xAxis = d3.svg2.axis()
-		//     .scale(x2)
-		//     .orient("bottom");
-
 		var xAxis = d3.axisBottom(x2);
-
-		// var yAxis = d3.svg2.axis()
-		//     .scale(y2)
-		//     .orient("left");
 
 		var yAxis = d3.axisLeft(y2);
 
+		// ********************************************************
+		// Adjustment for other charts
+		// ********************************************************
+
 		// Set variables for filtering the plot
-		var County_Input = "Alameda";
+		// Options are: [All,  Disadvantaged], anything else will default to Not Disadvantaged
 		var Economic_disadv_flag = "All";
 
-		// Mouseover functionality - Text displayed will be defined below
+		// Mouseover functionality - Text displayed will be defined below 
 		// How to change font, make solid fill, border color
 		var tip_test = d3.select('body')
 		  .append('div')
@@ -176,8 +170,8 @@
 				d["fitness_pct_Risk_NOT_economic_disadv"] = +d["fitness_pct_Risk_NOT_economic_disadv"]
 				d["County"] = +["County"]
 			});
-
-
+		  
+  
 		// Load GeoJSON data
 		d3.json("CA_county.json", function(err,json) {
 			if (err) throw err;
@@ -230,7 +224,7 @@
   			function bigText(d) {
   				var bigText = d.properties.NAME
   				return bigText;
-  			}
+  			} 
 
 
 			// Get County name
@@ -260,14 +254,97 @@
 			}
 
 			// Click function - saved for scatterplots for Nick
-			// function mClick(d){
+			// Try inserting scatterplot code into the mClick function. See v 1.1b for working scatterplot code
+			function mClick(d){
+				
+				// This gets the name of the county that was clicked
+				var click_county_input = d.properties.NAME;
 
-			// }
+				d3.csv("School Level for Scatterplots.csv", function(error, data2) {
+				  if (error) throw error;
 
+				  // Not necessary because we have numeric data, but just in case, coerce to numeric
+				  data2.forEach(function(d2) {
+				    d2.Combined_Fitness_Unhealthy_Pct_All = +d2.Combined_Fitness_Unhealthy_Pct_All;
+				    d2.Mean_Academic_Test_Score_All = +d2.Mean_Academic_Test_Score_All;
+				  });
+
+				  // Set the x and y limits of the plot as fixed values so scatter plots for each county will be on the same scale
+				  x2.domain([0,1]);
+				  y2.domain([200, 500]);
+
+				  svg2.append("g")
+				      .attr("class", "x axis")
+				      .attr("transform", "translate(0," + height2 + ")")
+				      .call(xAxis)
+				    .append("text")
+				      .attr("class", "label")
+				      .attr("x", 600)
+				      .attr("y", 50)
+				      .style("text-anchor", "end")
+				      .text("Proportion of Students in Unhealthy Fitness Zones");
+
+				  svg2.append("g")
+				      .attr("class", "y axis")
+				      .call(yAxis)
+				    .append("text")
+				      .attr("class", "label")
+				      .attr("transform", "rotate(-90)")
+				      .attr("x", -50)
+				      .attr("y", -75)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("Mean Academic Test Score")
+
+				  // Plot points
+				  svg2.selectAll(".dot")
+				  	.remove()
+
+				  svg2.selectAll(".dot")
+				  	  //.remove()
+				      .data(data2.filter(function(d4){ 
+				        //if (d4.County == County_Input) {return d4 }; })) // show only data for selected county
+				        if (d4.County == click_county_input) {return d4 }; }))
+				      .enter().append("circle")
+				      .attr("class", "dot")
+				      .attr("r", 3.5)
+				      .attr("cx", function(d4) { 
+				        if (Economic_disadv_flag == "All")
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_All)}
+				        else if (Economic_disadv_flag == "Disadvantaged")
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv)}
+				        else
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_NOT_economic_disadv)}; })
+				      .attr("cy", function(d4) {
+				        if (Economic_disadv_flag == "All")
+				            {return y2(d4.Mean_Academic_Test_Score_All)}
+				        else if (Economic_disadv_flag == "Disadvantaged")
+				            {return y2(d4.Mean_Academic_Test_Score_Economic_disadv)}
+				        else
+				            {return y2(d4.Mean_Academic_Test_Score_NOT_economic_disadv)}; })
+				      .style("fill", "A6CFAC")
+				      .on('mouseover', function(d4, i) {
+				        tip_test.transition().duration(0);
+				        tip_test.style("left", 900 + "px");   
+				  		tip_test.style("top", 340 + "px");
+				        tip_test.style('display', 'block');
+				        tip_test.text(d4.School);
+				      })
+				        .on('mouseout', function(d4, i) {
+				          tip_test.transition()
+				          .delay(10)
+				          .style('display', 'none');
+				        })
+				      ;
+
+
+				});
+
+			}
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain(d3.range(0, 1, 1/9)) // John: You need an array with 9 elements
+		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
 		    	//.range(d3.schemePiYG[10]);
 		    	.range(d3.schemeYlGnBu[9]);
 
@@ -279,19 +356,18 @@
 			    .attr("class", "key")
 			    .attr("transform", "translate(0,30)");
 
-			legend.selectAll(".legendBox")
+			legend.selectAll("rect")
 			  .data(color.range().map(function(d) {
-			      var color_range = color.invertExtent(d); // John: Declare your variables!!!
+			      color_range = color.invertExtent(d);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
 			      if (color_range[1] == null) color_range[1] = x.domain()[1];
 			      return color_range;
 			    }))
 			  .enter().append("rect")
-          .attr("class", "legendBox")
 			    .attr("height", 8)
-			    .attr("x", function(d) { return x(d[0]); }) // John: color_range shouldn't exist here, you were using the last value established by the previous function on line 283
-			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
-			    .attr("fill", function(d) { return color(d[0]); });
+			    .attr("x", function(d) { return x(color_range[0]); })
+			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
+			    .attr("fill", function(d) { return color(color_range[0]); });
 
 			legend.append("text")
 			    .attr("class", "caption")
@@ -321,94 +397,18 @@
 				.style("fill", countyFill)
 				.on("mouseover", mOver)
 				.on("mouseout", mOut)
-				//.on("onclick", mClick)
+				.on("click", mClick)
 
-
+ 
 		});
 
-});
+}); 
 
 // ********************************************
 // NC scatterplot code
 
 
-d3.csv("School Level for Scatterplots.csv", function(error, data2) {
-  if (error) throw error;
 
-  // Not necessary because we have numeric data, but just in case, coerce to numeric
-  data2.forEach(function(d) {
-    d.Combined_Fitness_Unhealthy_Pct_All = +d.Combined_Fitness_Unhealthy_Pct_All;
-    d.Mean_Academic_Test_Score_All = +d.Mean_Academic_Test_Score_All;
-  });
-
-  // Set the x and y limits of the plot as fixed values so scatter plots for each county will be on the same scale
-  x2.domain([0,1]);
-  y2.domain([200, 500]);
-
-  svg2.append("g")
-      .attr("class", "x axis")
-      .attr("transform", "translate(0," + height2 + ")")
-      .call(xAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("x", 600)
-      .attr("y", 50)
-      .style("text-anchor", "end")
-      .text("Proportion of Students in Unhealthy Fitness Zones");
-
-  svg2.append("g")
-      .attr("class", "y axis")
-      .call(yAxis)
-    .append("text")
-      .attr("class", "label")
-      .attr("transform", "rotate(-90)")
-      .attr("x", -50)
-      .attr("y", -75)
-      .attr("dy", ".71em")
-      .style("text-anchor", "end")
-      .text("Mean Academic Test Score")
-
-  // Plot points
-  svg2.selectAll(".dot")
-      .data(data2.filter(function(d2){
-        if (d2.County == County_Input) {return d2 }; })) // show only data for selected county
-      .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 3.5)
-      .attr("cx", function(d2) {
-        if (Economic_disadv_flag == "All")
-            {return x2(d2.Combined_Fitness_Unhealthy_Pct_All)}
-        else if (Economic_disadv_flag == "Disadvantaged")
-            {return x2(d2.Combined_Fitness_Unhealthy_Pct_Economic_disadv)}
-        else
-            {return x2(d2.Combined_Fitness_Unhealthy_Pct_NOT_economic_disadv)}; })
-      .attr("cy", function(d2) {
-        if (Economic_disadv_flag == "All")
-            {return y2(d2.Mean_Academic_Test_Score_All)}
-        else if (Economic_disadv_flag == "Disadvantaged")
-            {return y2(d2.Mean_Academic_Test_Score_Economic_disadv)}
-        else
-            {return y2(d2.Mean_Academic_Test_Score_NOT_economic_disadv)}; })
-      .style("fill", "A6CFAC")
-      .on('mouseover', function(d2, i) {
-        tip_test.transition().duration(0);
-        //tip_test.style('top', y2(d2.Mean_Academic_Test_Score_All) + 1230 + 'px');
-        //tip_test.style('left', x2(d2.Combined_Fitness_Unhealthy_Pct_All) + 'px');
-        tip_test.style("left", 500 + "px");   
-  		tip_test.style("top", 1250 + "px");     
-  		//tip_test.style("top", d2.cy + "px");
-        tip_test.style('display', 'block');
-        tip_test.text(d2.School);
-      })
-       // .on('mouseout', function(d2, i) {
-       //   tip_test.transition()
-       //   .delay(10)
-       //   .style('display', 'none');
-       // })
-      ;
-
-
-});
 
 
 

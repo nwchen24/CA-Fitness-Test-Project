@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+
+<html>
+
+
+<head>
+	<title>W209 Final Project</title>
+	<script src="https://d3js.org/d3.v4.min.js"></script>
+	<script type="text/javascript" src="http://use.typekit.com/brf5jpj.js"></script>
+	<!-- for color -->
+	<script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+	<script src="//use.typekit.net/drk2sev.js"></script>
+	<style type="text/css" src="fitness_ca.css">
+		path:hover {
+		fill-opacity: .9;
+		}
+  
+		h1 {
+	    position: absolute;
+	    left: 20px;
+	    top: 30px;
+	    font-family: "Proxima Nova", Montserrat, sans-serif;
+	    font-size: 2em;
+	    font-weight: 100;
+	    color: #005DAA; /* offical UK Kentucky blue */
+	    }
+		        
+		body {
+			background: whitesmoke;
+		}
+		  
+		svg {
+			position: relative;
+			display: block;
+			margin: auto;
+			top: 150px;
+		}
+
+		div.tooltip {
+		    color: orange;
+		    background-color: #686868;
+		    padding: .5em;
+		    font-size: medium;
+		    border-radius: 2px;
+		    opacity: 0.9;
+		    position: absolute;
+		}
+
+		text.big-text{
+	        position: absolute;
+	        left: 20px; /* ADJUSTMENT: horizontal position of the county name created on mouseover*/
+	        top: 55px; /* ADJUSTMENT: vertical position of the county name created on mouseover*/
+	        font-family: "Proxima Nova", Montserrat, sans-serif;
+	        font-size: 2em;
+	        font-weight: 100;
+	        color: #005DAA; 
+    	}
+
+		/*=========================================================================*/
+    	#scatterplot_title_div{
+	        position: absolute;
+	        left: 900px; /* ADJUSTMENT: horizontal position of scatterplot title*/
+	        top: 225px; /* ADJUSTMENT: vertical position of scatterplot title*/
+	        font-family: "Proxima Nova", Montserrat, sans-serif;
+	        font-size: 2em;
+	        font-weight: 100;
+	        color: #005DAA; 
+    	}
+		/*=========================================================================*/
+
+	</style>
+
+</head>
+
+
+<body>
+
+	<!-- the h1 shouldn't go inside the div -->
+	<h1> California 9th Grade FitnessGram Percentages for Non-disadvantaged Students in At Risk Fitness Zones</h1>
+	<!-- <div id="map" style="float:left;">  float:left moved the div to the left hand side of the screen -->
+	<div id="map" style="position:absolute; top:100px">
+	</div>
+
+	<div id="zoom" class="hidden">
+		<!-- <p>County: <span id="county">County Name</span></p> -->
+	</div>
+
+	<!-- ========================================================================= -->
+	<!-- Scatterplot div -->
+	<!-- <div id="scatterplot" style="margin-top:00px"> -->
+	<div id="scatterplot" style="position:absolute; top:0px; left:600px;">
+	</div>
+
+
+ 	<div id="scatterplot_title_div">
+ 	</div>
+
+	<!-- ========================================================================= -->
+
+
+	<script type="text/javascript">
+
+		// Width and height - original values width: 850, height: 1100.
+		var width = 700
+		var height = 905;
+
+
+		// DEFINE MAP PROJECTION ON CA
+		var CAprojection = d3.geoAlbers()
+			.center([ -20, 40 ]) 	// sets the latitude, origial value .center([ -22, 40 ]) 
+			.scale( 1066*width/200) //scale down to see entire CA
+			.rotate([106,3,10.5]);	// longitude, latitude, roll
+
+		//	DEFINE MAP GENERATOR
+		var path = d3.geoPath()		//path generator converts GeoJSON to SVG path
+			.projection(CAprojection); 		// tells path generator to use geoAlbers
+
+
+		// Define color
+		var color_by = "fitness_pct_Risk_NOT_economic_disadv";
+
+		// CREATE SVG ELEMENT
+		var svg = d3.select("#map")
+			.append("svg")
+			.attr("width", width)
+			.attr("height", height);
+
+
+		var tooltip = d3.select('#map').append('div')
+			.attr('class', 'hidden tooltip');
+
+		// "g" contains geometry elements
+		var g = svg.append("g");
+
+		// =========================================================================
+		// vars for scatterplots
+		// =========================================================================
+
+		// Set variable for filtering the plot to show all, disadvantaged, or NOT disadvantaged students
+		// Options are: [All,  Disadvantaged, Not Disadvantaged], anything else will default to Not Disadvantaged
+		var Economic_disadv_flag = "All";
+
+
+		// Original values: width2: 960, height2: 500
+		var margin2 = {top: 220, right: 50, bottom: 80, left: 90},
+		    width2 = 650 - margin2.left - margin2.right,
+		    height2 = 500 - margin2.top - margin2.bottom;
+
+		//NC create scatterplot svg element
+		var svg2 = d3.select("#scatterplot").append("svg")
+		    .attr("width", width2 + margin2.left + margin2.right)
+		    .attr("height", height2 + margin2.top + margin2.bottom)
+		    .append("g")
+		    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+
+
+		var x2 = d3.scaleLinear()
+		    .range([0, width2]);
+
+		var y2 = d3.scaleLinear()
+		    .range([height2, 0]);
+
+		var xAxis = d3.axisBottom(x2);
+
+		var yAxis = d3.axisLeft(y2);
+
+
+		// Mouseover functionality - Text displayed will be defined below 
+		// How to change font, make solid fill, border color
+		var tip_scatter = d3.select('body')
+		  .append('div')
+		  .attr('class', 'tip')
+		  .style('border', '1px solid black')
+		  .style('padding', '5px')
+		  .style('position', 'absolute')
+		  .style('display', 'none')
+		  .on('mouseover', function(d2, i) {
+		    tip.transition().duration(0);
+		  })
+		  .on('mouseout', function(d2, i) {
+		    tip.style('display', 'none');
+		  })
+		  ;
+
+
+		// Define County:Value text
+		var scatterTitle = d3.select("#scatterplot_title_div").append('text')
+				.classed('scatterplot-title', true);
+
+
+		// =========================================================================
+
+		// ********************************************************
+		// Adjustment for other charts
+		// ********************************************************
+
+		// Load Test file
+		d3.csv("Comb_County_Fit_Risk_NotDisadv.csv", function(data) {
+			console.log(data);
+			data.forEach(function(d) {
+				// d["County_num"] = +d["Num"]
+				d["County_Code"] = +d["County_Code"];
+				d["fitness_pct_Risk_NOT_economic_disadv"] = +d["fitness_pct_Risk_NOT_economic_disadv"]
+				d["County"] = +["County"]
+			});
+		  
+  
+		// Load GeoJSON data
+		d3.json("CA_county.json", function(err,json) {
+			if (err) throw err;
+			var caFeatures = json.features.filter(function (d) {
+				return d.properties.STATEFP==="06"; // The fips code of california
+			})
+			//console.log(json);
+
+			// Loop through each county's data value in the .csv file
+			for (var i = 0; i < data.length; i++) {
+  			//console.log("i", i, data[i][color_by]);
+
+				// Grab County Name
+				var dataCounty = data[i].County_Code;
+  				var dataFitness = data[i][color_by];
+
+				// Find the corresponding county inside the GeoJSON
+				for (var j = 0; j < caFeatures.length; j++)  {
+					var jsonCounty = caFeatures[j].properties.COUNTYFP;
+   			 		//console.log(jsonState);
+
+					if (dataCounty == jsonCounty) {
+						// Copy the data value into the JSON
+						caFeatures[j].properties.cases = dataFitness;
+      					//console.log(jsonState,json.features[j].properties.cases);
+						// Stop looking through the JSON
+						break;
+					}
+				}
+			}
+
+
+			// FUNCTIONS
+			// County color based on value
+			function countyFill(d) {
+				var value = d.properties.cases;
+				// Color county based on data values
+				if (value && color(value)) {
+					return color(value);
+				} else {
+					return "white";
+				}
+			}
+
+			// Define County:Value text
+			var bigText = d3.select("#map").append('text')
+  				.classed('big-text', true);
+
+
+
+			// Get County name
+			function countyName(d){
+				console.log(d.properties.NAME + ": " + d.properties.cases)
+				return d.properties.NAME + ": " + d.properties.cases;
+			}
+
+			// Mouseover function - highlights county
+			function mOver(d){
+		  		d3.select(this).style('fill', '#9900ff');
+  				bigText.text(countyName(d));
+			}
+
+			// Mouseout function - returns county back to color
+			function mOut(d){
+				d3.select(this).style("fill", countyFill(d));
+				// Reset county color
+				svg.select(this)
+			    	.style('fill', countyFill(d));
+				//bigText.text('');
+				if (centered) {
+			    	bigText.text(countyName(centered));
+				} else {
+			    	bigText.text('');
+				}
+			}
+
+		// =========================================================================
+		// Scatterplot click function
+		// =========================================================================
+
+			function scatterOnClick(d){
+				
+				// This gets the name of the county that was clicked
+				var click_county_input = d.properties.NAME;
+
+				d3.csv("School Level for Scatterplots.csv", function(error, data2) {
+				  if (error) throw error;
+
+				  // Not necessary because we have numeric data, but just in case, coerce to numeric
+				  data2.forEach(function(d2) {
+				    d2.Combined_Fitness_Unhealthy_Pct_All = +d2.Combined_Fitness_Unhealthy_Pct_All;
+				    d2.Mean_Academic_Test_Score_All = +d2.Mean_Academic_Test_Score_All;
+				  });
+
+				  // Set the x and y limits of the plot as fixed values so scatter plots for each county will be on the same scale
+				  x2.domain([0,1]);
+				  y2.domain([200, 500]);
+
+				  svg2.append("g")
+				      .attr("class", "x axis")
+				      .attr("transform", "translate(0," + height2 + ")")
+				      .call(xAxis)
+				    .append("text")
+				      .attr("class", "label")
+				      .attr("x", 600)
+				      .attr("y", 50)
+				      .style("text-anchor", "end")
+				      .text("Proportion of Students in Unhealthy Fitness Zones");
+
+				  svg2.append("g")
+				      .attr("class", "y axis")
+				      .call(yAxis)
+				    .append("text")
+				      .attr("class", "label")
+				      .attr("transform", "rotate(-90)")
+				      .attr("x", -50)
+				      .attr("y", -75)
+				      .attr("dy", ".71em")
+				      .style("text-anchor", "end")
+				      .text("Mean Academic Test Score")
+
+				  // Plot points
+				  svg2.selectAll(".dot")
+				  	.remove()
+
+				  // Add scatterplot title
+				  d3.select("#scatterplot_title_div")
+				  	.text(click_county_input + " County")
+
+
+				  svg2.selectAll(".dot")
+
+				      .data(data2.filter(function(d4){ 
+				        
+				        //filter to show only data for selected counties and remove data error observations where we have negative share of students in unhealthy zones
+				        if (d4.County == click_county_input && Economic_disadv_flag == "All" && d4.Combined_Fitness_Unhealthy_Pct_All > 0 && d4.Combined_Fitness_Unhealthy_Pct_All != "") {return d4}
+				        else if (d4.County == click_county_input && Economic_disadv_flag == "Disadvantaged" && d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv > 0 && d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv != "") {return d4}
+				        else if (d4.County == click_county_input && Economic_disadv_flag == "Not Disadvantaged" && d4.Mean_Academic_Test_Score_NOT_economic_disadv > 0 && d4.Mean_Academic_Test_Score_NOT_economic_disadv != "") {return d4};
+
+				    	}))
+				      .enter().append("circle")
+				      .attr("class", "dot")
+				      .attr("r", 3.5)
+				      .attr("cx", function(d4) { 
+				        if (Economic_disadv_flag == "All")
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_All)}
+				        else if (Economic_disadv_flag == "Disadvantaged")
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_Economic_disadv)}
+				        else
+				            {return x2(d4.Combined_Fitness_Unhealthy_Pct_NOT_economic_disadv)}; })
+				      .attr("cy", function(d4) {
+				        if (Economic_disadv_flag == "All")
+				            {return y2(d4.Mean_Academic_Test_Score_All)}
+				        else if (Economic_disadv_flag == "Disadvantaged")
+				            {return y2(d4.Mean_Academic_Test_Score_Economic_disadv)}
+				        else
+				            {return y2(d4.Mean_Academic_Test_Score_NOT_economic_disadv)}; })
+				      .style("fill", "A6CFAC")
+				      .on('mouseover', function(d4, i) {
+				        tip_scatter.transition().duration(0);
+				        tip_scatter.style("left", 900 + "px"); // Adjust position of the mouseover school name
+				  		tip_scatter.style("top", 240 + "px"); // Adjust position of the mouseover school name
+				        tip_scatter.style('display', 'block');
+				        tip_scatter.text(d4.School);
+				      })
+				        .on('mouseout', function(d4, i) {
+				          tip_scatter.transition()
+				          .delay(10)
+				          .style('display', 'none');
+				        })
+				      ;
+
+
+				});
+
+			}
+
+		// =========================================================================
+			
+			// Create legend
+			var color = d3.scaleThreshold()
+		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
+		    	//.range(d3.schemePiYG[10]);
+		    	.range(d3.schemeYlGnBu[9]);
+
+			var x = d3.scaleSqrt()
+		    	.domain([0,1])
+		    	.rangeRound([50, 500]);
+
+			var legend = svg.append("g")
+			    .attr("class", "key")
+			    .attr("transform", "translate(0,30)");
+
+			legend.selectAll("rect")
+			  .data(color.range().map(function(d) {
+			      color_range = color.invertExtent(d);
+			      if (color_range[0] == null) color_range[0] = x.domain()[0];
+			      if (color_range[1] == null) color_range[1] = x.domain()[1];
+			      return color_range;
+			    }))
+			  .enter().append("rect")
+			    .attr("height", 8)
+			    .attr("x", function(d) { return x(color_range[0]); })
+			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
+			    .attr("fill", function(d) { return color(color_range[0]); });
+
+			legend.append("text")
+			    .attr("class", "caption")
+			    .attr("x", x.range()[0])
+			    .attr("y", -6)
+			    .attr("fill", "#000")
+			    .attr("text-anchor", "start")
+			    .attr("font-weight", "bold")
+			    .text("Standardized Testing Scores");
+
+			legend.call(d3.axisBottom(x)
+			    .tickSize(13)
+			    .tickValues(color.domain()))
+			  	.select(".domain")
+			    .remove();
+			 // End of legend block
+
+
+			// Bind the data to the SVG and create one path per GeoJSON feature
+			svg.selectAll("path")
+				.data(caFeatures)
+				.enter()
+				.append("path")
+				.attr("d", path)
+				.style("stroke", "#353535")
+				.style("stroke-width", "1")
+				.style("fill", countyFill)
+				.on("mouseover", mOver)
+				.on("mouseout", mOut)
+				.on("click", scatterOnClick)
+
+ 
+		});
+
+}); 
+
+	</script>
+
+</body>
+
+</html>
