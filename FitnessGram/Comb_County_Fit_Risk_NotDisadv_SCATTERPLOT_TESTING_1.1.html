@@ -79,8 +79,8 @@
 	<script type="text/javascript">
 
 		// Width and height 
-		var width = 850
-		var height = 1100;
+		 var width = 850
+		 var height = 1100;
 
 
 		// DEFINE MAP PROJECTION ON CA
@@ -100,8 +100,10 @@
 		// CREATE SVG ELEMENT
 		var svg = d3.select("#map")
 			.append("svg")
-			.attr("width", width)
-			.attr("height", height);
+			.attr("float", "left")
+			.attr("width", "48%")
+			.attr("height", height)
+			.attr("margin", "1%");
 
 
 		var tooltip = d3.select('#map').append('div')
@@ -113,16 +115,17 @@
 		// ********************************************
 		// vars for scatterplots
 
-		var margin2 = {top: 20, right: 50, bottom: 80, left: 90},
-		    width2 = 960 - margin2.left - margin2.right,
-		    height2 = 500 - margin2.top - margin2.bottom;
+		// var margin2 = {top: 20, right: 50, bottom: 80, left: 90},
+		var width2 = 960;
+		var height2 = 500;
 
 		//NC create scatterplot svg element
 		var svg2 = d3.select("#scatterplot").append("svg")
-		    .attr("width", width2 + margin2.left + margin2.right)
-		    .attr("height", height2 + margin2.top + margin2.bottom)
+		    .attr("width", "48%")
+		    .attr("margin", "1%")
+		    .attr("height", height2)
 		    .append("g")
-		    .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
+		    //.attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
 
 
 		var x2 = d3.scaleLinear()
