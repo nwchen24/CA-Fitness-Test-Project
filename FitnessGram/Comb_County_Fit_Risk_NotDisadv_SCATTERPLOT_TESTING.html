@@ -209,7 +209,7 @@
 					if (dataCounty == jsonCounty) {
 						// Copy the data value into the JSON
 						caFeatures[j].properties.cases = dataColor;
-      					//console.log(jsonState,json.features[j].properties.cases);
+
 						// Stop looking through the JSON
 						break;
 					}
@@ -274,7 +274,6 @@
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	//.domain(d3.range(0, 1, 1/9)) // John: You need an array with 9 elements
 		    	.domain(d3.range(0, 1, 1/9))
 		    	.range(d3.schemeYlGnBu[9]);
 
@@ -288,15 +287,15 @@
 
 			legend.selectAll(".legendBox")
 			  .data(color.range().map(function(d) {
-			      var color_range = color.invertExtent(d); // John: Declare your variables!!!
+			      var color_range = color.invertExtent(d);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
 			      if (color_range[1] == null) color_range[1] = x.domain()[1];
 			      return color_range;
 			    }))
 			  .enter().append("rect")
-          .attr("class", "legendBox")
+          		.attr("class", "legendBox")
 			    .attr("height", 8)
-			    .attr("x", function(d) { return x(d[0]); }) // John: color_range shouldn't exist here, you were using the last value established by the previous function on line 283
+			    .attr("x", function(d) { return x(d[0]); }) 
 			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
 			    .attr("fill", function(d) { return color(d[0]); });
 

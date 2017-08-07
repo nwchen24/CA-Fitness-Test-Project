@@ -63,7 +63,7 @@
 <body>
 
 	<!-- the h1 shouldn't go inside the div -->
-	<h1> California 9th Grade Standardized Testing for All Students</h1>
+	<h1> California Standardized Testing for All Students</h1>
 	<div id="map">
 	</div>
 
@@ -107,7 +107,7 @@
 
 
 		// Load Test file
-		d3.csv("Comb_County_Acad_all.csv", function(data) {
+		d3.csv("Comb_County_Main_Fitnessgram_Academic_2014_2016_copy.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
 				d["County_Code"] = +d["County_Code"];
@@ -119,7 +119,8 @@
 				return +d["academic_wght_avg_score_All"];
 			})
 			var min_color = d3.min(data, function(d){
-				return +d["academic_wght_avg_score_All"];
+				if (+d["academic_wght_avg_score_All"] > 0 && +d["academic_wght_avg_score_All"] != "")
+				{return +d["academic_wght_avg_score_All"]};
 			});
 		  
   
@@ -129,7 +130,6 @@
 			var caFeatures = json.features.filter(function (d) {
 				return d.properties.STATEFP==="06"; // The fips code of california
 			})
-			//console.log(json);
 
 			// Loop through each county's data value in the .csv file
 			for (var i = 0; i < data.length; i++) {
@@ -147,7 +147,6 @@
 					if (dataCounty == jsonCounty) {
 						// Copy the data value into the JSON
 						caFeatures[j].properties.cases = dataColor;
-      					//console.log(jsonState,json.features[j].properties.cases);
 						// Stop looking through the JSON
 						break;
 					}
@@ -200,18 +199,18 @@
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain(d3.range(300, max_color, (max_color-300)/4))
-		    	.range(d3.schemeYlGnBu[4]);
+		    	.domain(d3.range(min_color, max_color, (max_color-min_color)/6))
+		    	.range(d3.schemeYlGnBu[6]);
 
 			var x = d3.scaleSqrt()
-		    	.domain([300, max_color])
-		    	.rangeRound([50, max_color]);
+		    	.domain([min_color, max_color])
+		    	.rangeRound([min_color-(min_color/2), max_color]);
 
 			var legend = svg.append("g")
 			    .attr("class", "key")
 			    .attr("transform", "translate(0,30)");
 
-			legend.selectAll("rect")
+			legend.selectAll(".legendBox")
 			  .data(color.range().map(function(d) {
 			      var color_range = color.invertExtent(d);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
