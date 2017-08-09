@@ -110,7 +110,6 @@
 		d3.csv("Comb_County_Fit_Risk_Disadv.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
-				// d["County_num"] = +d["Num"]
 				d["County_Code"] = +d["County_Code"];
 				d["fitness_pct_risk_disadv"] = +d["fitness_pct_risk_disadv"]
 				d["County"] = +["County"]
