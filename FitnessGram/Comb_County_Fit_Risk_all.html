@@ -87,7 +87,7 @@
 
 
 		// Define color
-		var color_by = "fitness_pct_risk_all";
+		var color_by = "fitness_pct_Unhealthy_All";
 
 		// CREATE SVG ELEMENT
 		var svg = d3.select("#map")
@@ -104,20 +104,20 @@
 
 
 		// Load Test file
-		d3.csv("Comb_County_Main_Fitnessgram_Academic_2014_2016_copy.csv", function(data) {
+		d3.csv("Comb_County_lvl_Fitnessgram_Academic_2014_2016_1.1.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
 				d["County_Code"] = +d["County_Code"];
-				d["fitness_pct_risk_all"] = +d["fitness_pct_risk_all"]
+				d["fitness_pct_Unhealthy_All"] = +d["fitness_pct_Unhealthy_All"]
 				d["County"] = +["County"]
 			})
 			// create max and min values to use for legend colors
 			var max_color = d3.max(data, function(d){
-				return +d["fitness_pct_risk_all"];
+				return +d["fitness_pct_Unhealthy_All"];
 			})
 			var min_color = d3.min(data, function(d){
-				if (+d["fitness_pct_risk_all"] > 0 && +d["fitness_pct_risk_all"] != "")
-				{return +d["fitness_pct_risk_all"]};
+				if (+d["fitness_pct_Unhealthy_All"] > 0 && +d["fitness_pct_Unhealthy_All"] != "")
+				{return +d["fitness_pct_Unhealthy_All"]};
 			});
 		  
   
@@ -190,12 +190,6 @@
 				}
 			}
 
-			// Click function - saved for scatterplots
-			// function mClick(d){
-
-			// }
-
-
 			// Create legend
 			var color = d3.scaleThreshold()
 		    	.domain(d3.range(min_color, max_color, (max_color-min_color)/5))
@@ -217,7 +211,7 @@
 			      return color_range;
 			    }))
 			  .enter().append("rect")
-			  	.attr("class", "legendBox")
+				.attr("class", "legendBox")
 			    .attr("height", 8)
 			    .attr("x", function(d) { return x(d[0]); })
 			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })

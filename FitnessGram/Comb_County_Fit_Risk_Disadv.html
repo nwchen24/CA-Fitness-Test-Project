@@ -62,13 +62,11 @@
 
 <body>
 
-	<!-- the h1 shouldn't go inside the div -->
-	<h1> California 9th Grade FitnessGram Percentages for Disadvantaged Students in At Risk Fitness Zones</h1>
+	<h1> Proportion of Disadvantaged Students in At Risk Zones for California FitnessGram Test</h1>
 	<div id="map">
 	</div>
 
 	<div id="zoom" class="hidden">
-		<!-- <p>County: <span id="county">County Name</span></p> -->
 	</div>
 
 	<script type="text/javascript">
@@ -90,7 +88,7 @@
 
 
 		// Define color
-		var color_by = "fitness_pct_risk_disadv";
+		var color_by = "fitness_pct_Unhealthy_Economic_disadv";
 
 		// CREATE SVG ELEMENT
 		var svg = d3.select("#map")
@@ -107,13 +105,22 @@
 
 
 		// Load Test file
-		d3.csv("Comb_County_Fit_Risk_Disadv.csv", function(data) {
+		d3.csv("Comb_County_lvl_Fitnessgram_Academic_2014_2016_1.1.csv", function(data) {
 			console.log(data);
 			data.forEach(function(d) {
 				d["County_Code"] = +d["County_Code"];
-				d["fitness_pct_risk_disadv"] = +d["fitness_pct_risk_disadv"]
+				d["fitness_pct_Unhealthy_Economic_disadv"] = +d["fitness_pct_Unhealthy_Economic_disadv"]
 				d["County"] = +["County"]
-			});
+			})
+			// create max and min values to use for legend colors
+			var max_color = d3.max(data, function(d){
+				return +d["fitness_pct_Unhealthy_Economic_disadv"];
+			})
+			var min_color = d3.min(data, function(d){
+				if (+d["fitness_pct_Unhealthy_Economic_disadv"] > 0 && +d["fitness_pct_Unhealthy_Economic_disadv"] != "")
+				{return +d["fitness_pct_Unhealthy_Economic_disadv"]};
+			})
+			;
 		  
   
 		// Load GeoJSON data
@@ -122,11 +129,9 @@
 			var caFeatures = json.features.filter(function (d) {
 				return d.properties.STATEFP==="06"; // The fips code of california
 			})
-			//console.log(json);
 
 			// Loop through each county's data value in the .csv file
 			for (var i = 0; i < data.length; i++) {
-  			//console.log("i", i, data[i][color_by]);
 
 				// Grab County Name
 				var dataCounty = data[i].County_Code;
@@ -135,12 +140,10 @@
 				// Find the corresponding county inside the GeoJSON
 				for (var j = 0; j < caFeatures.length; j++)  {
 					var jsonCounty = caFeatures[j].properties.COUNTYFP;
-   			 		//console.log(jsonState);
 
 					if (dataCounty == jsonCounty) {
 						// Copy the data value into the JSON
 						caFeatures[j].properties.cases = dataFitness;
-      					//console.log(jsonState,json.features[j].properties.cases);
 						// Stop looking through the JSON
 						break;
 					}
@@ -182,7 +185,6 @@
 				// Reset county color
 				svg.select(this)
 			    	.style('fill', countyFill(d));
-				//bigText.text('');
 				if (centered) {
 			    	bigText.text(countyName(centered));
 				} else {
@@ -190,27 +192,21 @@
 				}
 			}
 
-			// Click function - saved for scatterplots
-			// function mClick(d){
-
-			// }
-
 
 			// Create legend
 			var color = d3.scaleThreshold()
-		    	.domain([0, 0.2, 0.4, 0.6, 0.8, 1])
-		    	//.range(d3.schemePiYG[10]);
-		    	.range(d3.schemeYlGnBu[9]);
+		    	.domain(d3.range(min_color, max_color, (max_color-min_color)/5))
+		    	.range(d3.schemeOrRd[5]);
 
 			var x = d3.scaleSqrt()
-		    	.domain([0,1])
-		    	.rangeRound([50, 500]);
+		    	.domain([min_color, max_color])
+		    	.rangeRound([min_color+50, max_color*500]);
 
 			var legend = svg.append("g")
 			    .attr("class", "key")
 			    .attr("transform", "translate(0,30)");
 
-			legend.selectAll("rect")
+			legend.selectAll(".legendBox")
 			  .data(color.range().map(function(d) {
 			      color_range = color.invertExtent(d);
 			      if (color_range[0] == null) color_range[0] = x.domain()[0];
@@ -218,10 +214,11 @@
 			      return color_range;
 			    }))
 			  .enter().append("rect")
+			  	.attr("class", "legendBox")
 			    .attr("height", 8)
-			    .attr("x", function(d) { return x(color_range[0]); })
-			    .attr("width", function(d) { return x(color_range[1]) - x(color_range[0]); })
-			    .attr("fill", function(d) { return color(color_range[0]); });
+			    .attr("x", function(d) { return x(d[0]); })
+			    .attr("width", function(d) { return x(d[1]) - x(d[0]); })
+			    .attr("fill", function(d) { return color(d[0]); });
 
 			legend.append("text")
 			    .attr("class", "caption")
