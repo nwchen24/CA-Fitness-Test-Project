@@ -81,7 +81,6 @@
 
     	}
 
-    	/**********************************************************************************************************************************/
 
 
 		/*=========================================================================*/
@@ -95,6 +94,8 @@
 	        color: #005DAA; 
     	}
 		/*=========================================================================*/
+
+    	/**********************************************************************************************************************************/
 
 
 	</style>
@@ -429,8 +430,8 @@
 				      .style("fill", "A6CFAC")
 				      .on('mouseover', function(d4, i) {
 				        tip_scatter.transition().duration(0);
-				        tip_scatter.style("left", 870 + "px"); // Adjust position of the mouseover school name
-				  		tip_scatter.style("top", 190 + "px"); // Adjust position of the mouseover school name
+				        tip_scatter.style("left", 870 + "px"); // Adjust position of the mouseover school name ***************************************************
+				  		tip_scatter.style("top", 190 + "px"); // Adjust position of the mouseover school name ***************************************************
 				        tip_scatter.style('display', 'block');
 				        tip_scatter.style('text-anchor', 'middle')
 				        tip_scatter.text(d4.School_Name);

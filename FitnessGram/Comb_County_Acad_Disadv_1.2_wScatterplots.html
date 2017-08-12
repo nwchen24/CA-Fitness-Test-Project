@@ -15,14 +15,13 @@
 		fill-opacity: .9;
 		}
   
-		h1 {
-	    position: absolute;
-	    left: 20px;
-	    top: 30px;
+  		/**********************************************************************************************************************************/
+		h1 {	
 	    font-family: "Proxima Nova", Montserrat, sans-serif;
 	    font-size: 2em;
-	    font-weight: 100;
+	    font-weight: 200;
 	    color: #005DAA; /* offical UK Kentucky blue */
+	    text-align: center;
 	    }
 		        
 		body {
@@ -33,7 +32,7 @@
 			position: relative;
 			display: block;
 			margin: auto;
-			top: 150px;
+			top: 40px;
 		}
 
 		div.tooltip {
@@ -48,25 +47,53 @@
 
 		text.big-text{
 	        position: absolute;
-	        left: 20px;
-	        top: 100px;
+			/* NC Added to center mouseover county name above map */
+	        left: 115px;
+	        top: 0px;
 	        font-family: "Proxima Nova", Montserrat, sans-serif;
 	        font-size: 2em;
 	        font-weight: 100;
 	        color: #005DAA; 
     	}
 
+		/* Format annotations*/  	
+		p.title{
+    		position: absolute;
+    		left: 660px;
+    		top: 540px;
+    		font-family: "Proxima Nova", Montserrat, sans-serif;
+	        font-size: 1.5em;
+	        color: #7E7E7E;
+	        width: 575px;
+	        text-align: center;
+
+    	}
+
+    	p.content{
+    		position: absolute;
+    		left: 660px;
+    		top: 590px;
+    		font-family: "Proxima Nova Light", Montserrat, sans-serif;
+	        font-size: .8em;
+	        color: #7E7E7E;
+	        width: 575px; 
+
+    	}
+
+
 		/*=========================================================================*/
     	#scatterplot_title_div{
 	        position: absolute;
 	        left: 850px; /* ADJUSTMENT: horizontal position of scatterplot title*/
-	        top: 225px; /* ADJUSTMENT: vertical position of scatterplot title*/
+	        top: 105px; /* ADJUSTMENT: vertical position of scatterplot title*/
 	        font-family: "Proxima Nova", Montserrat, sans-serif;
 	        font-size: 2em;
 	        font-weight: 100;
 	        color: #005DAA; 
     	}
 		/*=========================================================================*/
+
+    	/**********************************************************************************************************************************/
 
 
 	</style>
@@ -96,6 +123,25 @@
  	</div>
 
 	<!-- ========================================================================= -->
+
+	<!-- ********************************************************************************************************************************* -->
+	<!-- Annotations -->
+	<p class = title>About the Data</p>
+	<p class = content>
+		The data used to create this visualization were collected from the California department of education. Pooled data for 2014 - 2016 was used for this visualization. This analysis focuses on FITNESSGRAM administered to 9th grade students and standardized tests administered to 10th grade students.
+		<br>
+		<br>
+		For each school, academic scores represent the mean score across all tests with available scores for that school. At the county level, the mean test score is calculated as the average of the mean score for each school in the county weighted by the number of students tested at each school.
+		<br>
+		<br>
+		The proportion of students at the school and county level in 'unhealthy' fitness zones is calculated as the total share of students deemed 'Needs Improvement' during administartion of the FITNESSGRAM.
+		<br>
+		<br>
+		More information about the underlying data can be found here: <a href="http://www.cde.ca.gov/ta/tg/pf/pftresearch.asp">FITNESSGRAM</a> ; <a href="http://caaspp.cde.ca.gov/caaspp2016/ResearchFileList.aspx?rf=True&ps=True">Standardized Testing</a>
+
+	</p>
+	<!-- ********************************************************************************************************************************* -->
+
 
 
 	<script type="text/javascript">
@@ -133,6 +179,11 @@
 		// "g" contains geometry elements
 		var g = svg.append("g");
 
+		// ************************************************************************************************************
+		// NC added to format displayed scores
+		var formatDecimal = d3.format(".1f");
+		var formatPercent = d3.format(",.2%");
+		// ************************************************************************************************************
 
 		// =========================================================================
 		// SCATTERPLOT ADJUSTMENT
@@ -266,24 +317,32 @@
 				return d.properties.NAME + ": " + d.properties.cases;
 			}
 
+			// ****************************************************************************************************************
+			// NC adjusted to format number with only one decimal place on county mouseover
+			// Get County name
+			function countyName(d){
+				console.log(d.properties.NAME + ": " + d.properties.cases)
+				return d.properties.NAME + ": " + formatDecimal(d.properties.cases);
+			}
+
 			// Mouseover function - highlights county
 			function mOver(d){
 		  		d3.select(this).style('fill', '#9900ff');
   				bigText.text(countyName(d));
 			}
 
+
+			// NC adjust mousout function to remove county name on mouseout
 			// Mouseout function - returns county back to color
 			function mOut(d){
 				d3.select(this).style("fill", countyFill(d));
+				bigText.text("");
 				// Reset county color
 				svg.select(this)
 			    	.style('fill', countyFill(d));
-				//bigText.text('');
-				if (centered) {
-			    	bigText.text(countyName(centered));
-				} else {
-			    	bigText.text('');
-				}
+	
+			// ****************************************************************************************************************
+			
 			}
 
 		// =========================================================================
@@ -373,8 +432,8 @@
 				      .style("fill", "A6CFAC")
 				      .on('mouseover', function(d4, i) {
 				        tip_scatter.transition().duration(0);
-				        tip_scatter.style("left", 900 + "px"); // Adjust position of the mouseover school name
-				  		tip_scatter.style("top", 300 + "px"); // Adjust position of the mouseover school name
+				        tip_scatter.style("left", 870 + "px"); // Adjust position of the mouseover school name ***************************************************
+				  		tip_scatter.style("top", 190 + "px"); // Adjust position of the mouseover school name ***************************************************
 				        tip_scatter.style('display', 'block');
 				        tip_scatter.style('text-anchor', 'middle')
 				        tip_scatter.text(d4.School_Name);
