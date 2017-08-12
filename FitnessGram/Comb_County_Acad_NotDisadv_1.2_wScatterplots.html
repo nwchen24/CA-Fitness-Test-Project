@@ -317,23 +317,29 @@
 				return d.properties.NAME + ": " + formatDecimal(d.properties.cases);
 			}
 
-			// Mouseover function - highlights county
+			// Mouseover function - bolds and changes color of county border
 			function mOver(d){
-		  		d3.select(this).style('fill', '#9900ff');
+		  		d3.select(this)
+		  			.style('stroke', '#E67373')
+		  			.style('stroke-width', 5);
   				bigText.text(countyName(d));
 			}
 
 
 			// NC adjust mousout function to remove county name on mouseout
-			// Mouseout function - returns county back to color
+			// Mouseout function - returns county border back to black and thin
 			function mOut(d){
-				d3.select(this).style("fill", countyFill(d));
+				d3.select(this).style("fill", countyFill(d))
+					.style('stroke', 'black')
+					.style('stroke-width', 1);
 				bigText.text("");
 				// Reset county color
 				svg.select(this)
 			    	.style('fill', countyFill(d));
 	
 			// ****************************************************************************************************************
+
+
 			}
 
 		// =========================================================================
