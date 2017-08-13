@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>FitnessGram</title>
+
+    <!-- Bootstrap core css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="project_styles.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- miscellaneous navbar in case we want to add extra features-->
+    <nav id="index" style="background-color:darkblue; border-radius:0px;" class="navbar navbar-light bg-faded">
+    </nav>
+
+    <!-- navbar brand as FitnessGram with image and Cooper institute link-->
+    <div class="navbar-wrapper">
+      <div class="container">
+        <nav class="navbar navbar-toggleable-md navbar-light bg-faded navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">
+                <p id="logo">
+                  <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span>
+                  <span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span>
+                </p>
+              </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="Webpage.html#about" onclick="console.log('clicked');">About</a></li>
+                <!--
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Nav header</li>
+                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#">One more separated link</a></li>
+                  </ul>
+                </li>
+                -->
+                <li><a href="#contact">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div id="mapButtons" class="container">
+
+      <div class="jumbotron">
+
+        <h2>Search 
+          <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span>
+          <span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span>
+        </h2>
+
+        <span>
+            <p>Show map colors by:</p>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary active" onclick="console.log('FG clicked');">
+                <input type="radio" name="options" id="option1" checked> FitnessGram
+              </label>
+              <label class="btn btn-primary" onclick="console.log('AS clicked');">
+                <input type="radio" name="options" id="option2"> Academic Scores
+              </label>
+            </div>
+        
+            <p>Student groups:</p>
+            <div class="btn-group" data-toggle="buttons">
+              <label class="btn btn-primary active" onclick="console.log('All clicked');">
+                <input type="radio" name="options" id="option1" checked> All
+              </label>
+              <label class="btn btn-primary" onclick="console.log('ED clicked');">
+                <input type="radio" name="options" id="option2"> Economically Disadvantaged
+              </label>
+              <label class="btn btn-primary" onclick="load_home();">
+                <input type="radio" name="options" id="option3"> Not Economically Disadvantaged
+              </label>
+            </div>      
+        </span>
+      
+      </div>
+
+    </div>
+
+    <div class="container">
+      <div class="jumbotron" id="selectedMap">
+      <h3> Map </h3>
+      <footer>
+        <p class="pull-right"><a href="#index">Back to top</a></p>
+      </footer>
+      </div>
+    </div>
+
+    <!-- FOOTER -->
+    <div>
+      <footer>
+        <p class="pull-right"><a href="#index">Back to top</a></p>
+        <p>&copy; 2017 <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span><span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span> &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+
+    </div><!-- /.container -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+      function topFunction() {
+          document.body.scrollTop = 0; // For Chrome, Safari and Opera 
+          document.documentElement.scrollTop = 0; // For IE and Firefox
+      }
+
+      function load_home() {
+           document.getElementById("selectedMap").innerHTML='<object type="text/html" data="Webpage.html" ></object>';
+      }
+    </script>
+
+  </body>
+</html>
