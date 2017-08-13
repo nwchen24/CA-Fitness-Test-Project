@@ -1,0 +1,24 @@
+Field									   Description
+County_Code                                Self explanatory
+District_Code                              Self explanatory
+School_Code                                Self explanatory
+Subgroup                                   All students, economically disadvantaged students, or NOT economically disadvantaged students
+NoHFZ9_aerobic                             Number of 9th grade students in 'Healthy Fitness Zone' - aerobic fitness
+NoStud9_aerobic                            Number of 9th grade students tested - aerobic fitness
+Perc9HFZ_aerobic                           Percent of 9th grade students in 'Healthy Fitness Zone' - aerobic fitness
+Perc9NI_aerobic                            Percent of 9th grade students in 'Need Improvement Zone' - aerobic fitness
+Perc9NI_HR_aerobic                         Percent of 9th grade students in 'Need Improvement High Risk Zone' - aerobic fitness
+NoHFZ9_bodycomp                            Number of 9th grade students in 'Healthy Fitness Zone' - body composition
+NoStud9_bodycomp                           Number of 9th grade students tested - body composition
+Perc9HFZ_bodycomp                          Percent of 9th grade students in 'Healthy Fitness Zone' - body composition
+Perc9NI_bodycomp                           Percent of 9th grade students in 'Need Improvement Zone' - body composition
+Perc9NI_HR_bodycomp                        Percent of 9th grade students in 'Need Improvement High Risk Zone' - body composition
+Mean_Academic_Test_Score                   Average across the four types of tests (C, M, P, S - need to figure out what these tests are.)
+Students_Tested_Academic                   Number of students tested. The original variable is called 'Students Tested'
+Total_Tested_At_Subgroup_Level_Academic    'Total' number of students tested (Not sure about the difference between this number and the 'Students_Tested_Academic'). The original variable is called 'Total Tested at Subgroup Level'.
+
+
+
+
+Note, a description of the variables in the original academic data can be found here:
+http://caaspp.cde.ca.gov/caaspp2014/research_fixfileformat.aspx
