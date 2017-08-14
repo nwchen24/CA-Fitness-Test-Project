@@ -83,42 +83,35 @@
           <span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span>
         </h2>
 
-        <span>
-            <p>Show map colors by:</p>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-primary active" onclick="console.log('FG clicked');">
-                <input type="radio" name="options" id="option1" checked> FitnessGram
-              </label>
-              <label class="btn btn-primary" onclick="console.log('AS clicked');">
-                <input type="radio" name="options" id="option2"> Academic Scores
-              </label>
-            </div>
-        
-            <p>Student groups:</p>
-            <div class="btn-group" data-toggle="buttons">
-              <label class="btn btn-primary active" onclick="console.log('All clicked');">
-                <input type="radio" name="options" id="option1" checked> All
-              </label>
-              <label class="btn btn-primary" onclick="console.log('ED clicked');">
-                <input type="radio" name="options" id="option2"> Economically Disadvantaged
-              </label>
-              <label class="btn btn-primary" onclick="load_home();">
-                <input type="radio" name="options" id="option3"> Not Economically Disadvantaged
-              </label>
-            </div>      
-        </span>
+        <p id="choice">Select the test type to plot:</p>
+        <div class="btn-group" data-toggle="buttons" id="map_colors">
+          <label class="btn btn-primary" onclick="loadMapFG();" id="FG">
+            <input type="radio" name="options" id="option1" checked> FitnessGram
+          </label>
+          <label class="btn btn-primary" onclick="loadMapAS();" id="AS">
+            <input type="radio" name="options" id="option2"> Academic Scores
+          </label>
+        </div>
+    
+        <p id="choice">Select the student group category to plot:</p>
+        <div class="btn-group" data-toggle="buttons" id="student_groups">
+          <label class="btn btn-primary" onclick="loadMapAll();" id="All">
+            <input type="radio" name="options" id="option1" checked> All
+          </label>
+          <label class="btn btn-primary" onclick="loadMapED();" id="ED">
+            <input type="radio" name="options" id="option2"> Economically Disadvantaged
+          </label>
+          <label class="btn btn-primary" onclick="loadMapNED();" id="NED">
+            <input type="radio" name="options" id="option3"> Not Economically Disadvantaged
+          </label>
+        </div>      
       
       </div>
 
     </div>
 
-    <div class="container">
-      <div class="jumbotron" id="selectedMap">
-      <h3> Map </h3>
-      <footer>
-        <p class="pull-right"><a href="#index">Back to top</a></p>
-      </footer>
-      </div>
+    <div id="map" class="container-fluid">
+        <div id="selectedMap"></div>
     </div>
 
     <!-- FOOTER -->
@@ -142,9 +135,124 @@
           document.documentElement.scrollTop = 0; // For IE and Firefox
       }
 
-      function load_home() {
-           document.getElementById("selectedMap").innerHTML='<object type="text/html" data="Webpage.html" ></object>';
+      function loadMapFG() {
+
+          var map_colors_active = 'FG';
+
+          var student_groups_active = '';
+          $('#student_groups .active').each(function(){
+                student_groups_active= $(this).attr('id'); 
+                  }); 
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (student_groups_active == "All") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "ED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "NED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
       }
+
+      function loadMapAS() {
+
+          var map_colors_active = 'AS';
+
+          var student_groups_active = '';
+          $('#student_groups .active').each(function(){
+                student_groups_active= $(this).attr('id'); 
+                  }); 
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (student_groups_active == "All") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "ED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "NED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapAll() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'All';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_all_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapED() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'ED';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapNED() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'NED';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% type="text/html" data="../FitnessGram/Comb_County_Acad_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
     </script>
 
   </body>

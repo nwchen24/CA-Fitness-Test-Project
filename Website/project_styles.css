@@ -29,7 +29,18 @@
 
 .jumbotron {
     margin-top: 40px;
+    margin-bottom: 40px;
+
   }
+
+div#map.container-fluid {
+  height: 1000px;
+}
+
+
+.btn-group {
+    top: 0;
+}
 
 span#logo_bold {
 font-family: arial;
@@ -40,6 +51,10 @@ color:red;
 span#logo_normal {
 font-family: arial narrow;
 color:darkblue;
+}
+
+p#choice {
+  bottom: 0;
 }
 
 .navbar-wrapper {
