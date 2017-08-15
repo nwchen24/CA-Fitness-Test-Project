@@ -5,12 +5,11 @@
 #logo {
   font-size: 28px;
 }
-}
 
 
 .container {
    font-family: helvetica;
-   font-size: 14px;
+   font-size: 12px;
    }
 
 /* Changes position of caption */
@@ -28,19 +27,9 @@
 }
 
 .jumbotron {
-    margin-top: 40px;
-    margin-bottom: 40px;
-
+    padding-top: 10px
+    padding-bottom: 10px;
   }
-
-div#map.container-fluid {
-  height: 1000px;
-}
-
-
-.btn-group {
-    top: 0;
-}
 
 span#logo_bold {
 font-family: arial;
@@ -53,8 +42,9 @@ font-family: arial narrow;
 color:darkblue;
 }
 
-p#choice {
-  bottom: 0;
+#choice p {
+  margin-bottom: 10px;
+  margin-top: 10px;
 }
 
 .navbar-wrapper {
