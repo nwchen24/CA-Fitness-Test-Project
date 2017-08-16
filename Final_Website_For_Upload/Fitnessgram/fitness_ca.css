@@ -1,0 +1,116 @@
+path:hover {
+	fill-opacity: .9;
+}
+  
+  h1 {
+    text-align: center;
+  	font-size: xx-large;  
+	font-family: 'Gruppo', cursive;
+  }
+        
+  body {
+    font: 11px sans-serif;
+  }
+  
+  svg {
+    display: block;
+    margin: auto;
+  }
+
+  div.tooltip {
+    color: orange;
+    background-color: #686868;
+    padding: .5em;
+    font-size: medium;
+    border-radius: 2px;
+    opacity: 0.9;
+    position: absolute;
+   }
+
+  text.big-text{
+	font-size: 40px;
+	font-weight: 400;
+	position:absolute;
+	top: 60px;
+	left: 20px;
+	z-index:99;
+	float:left;
+	}
+
+
+
+/*			body {
+				margin: 0;
+				background-color: #48494B;
+				font-family: "proxima-nova", "Source Sans Pro", sans-serif;
+			}
+
+			#container {
+				width: 800px;
+				margin-left: 30px;
+				margin-right: auto;
+				margin-top: 30px;
+				padding: 30px;
+				background-color: white;
+				box-shadow: 3px 3px 7px #222;
+			}
+			
+			h1 {
+				font-size: 24px;
+				margin: 0;
+			}
+
+			p {
+				font-size: 16px;
+				margin: 15px 0 10px 0;
+			}
+
+			a {
+			  color: #799DCB;
+			  text-decoration: none;
+			  transition: color .3s, background .3s, border .3s;
+			}
+			a:hover {
+			  color: #48494b;
+			  background: #e7e8e9;
+			}
+
+			svg {
+				background-color: white;
+				padding-left: 20px;
+			}
+			
+			path {
+				fill: #799dcb;
+				stroke: #fff;
+				}
+			path:hover {
+				fill:#48494b;
+				cursor:pointer;
+			}
+
+			#tooltip {
+				width: 150px;
+				height: auto;
+				padding: 5px;
+				background-color: #fff;
+				color: #000;
+				-webkit-border-radius: 5px;
+				-moz-border-radius: 5px;
+				border-radius: 5px;
+				-webkit-box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+				-moz-box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+				box-shadow: 3px 3px 8px rgba(0, 0, 0, 0.4);
+				pointer-events: none;
+				position: absolute;
+				}
+				
+			#tooltip.hidden {
+				display: none;
+			}
+			
+			#tooltip p {
+			margin: 0;
+			font-size: 14px;
+			line-height: 18px;
+			}*/

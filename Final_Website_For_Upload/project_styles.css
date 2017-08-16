@@ -1,0 +1,56 @@
+#navbar {
+  font-size: 20px;
+}
+
+#logo {
+  font-size: 28px;
+}
+
+
+.container {
+   font-family: helvetica;
+   font-size: 12px;
+   }
+
+/* Changes position of caption */
+.carousel-caption {
+    top: 30%;
+    bottom: auto;
+}
+
+.carousel-caption h1 {
+    color: white;
+    outline-color: black;
+    outline-width: 100;
+    font-family: helvetica;
+    font-weight: 700;
+}
+
+.jumbotron {
+    padding-top: 10px
+    padding-bottom: 10px;
+  }
+
+span#logo_bold {
+font-family: arial;
+font-weight: 700;
+color:red;
+}
+
+span#logo_normal {
+font-family: arial narrow;
+color:darkblue;
+}
+
+#choice p {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.navbar-wrapper {
+  font-size: 30px;
+}
+
+.caption h3 {
+   font-family: helvetica;
+}

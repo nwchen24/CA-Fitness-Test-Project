@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>FitnessGram</title>
+
+    <!-- Bootstrap core css-->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../Website/project_styles.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+    <!-- miscellaneous navbar in case we want to add extra features-->
+    <nav id="index" style="background-color:darkblue; border-radius:0px;" class="navbar navbar-light bg-faded">
+    </nav>
+
+    <!-- navbar brand as FitnessGram with image and Cooper institute link-->
+    <div class="navbar-wrapper">
+      <div class="container">
+        <nav class="navbar navbar-toggleable-md navbar-light bg-faded navbar-static-top">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="#">
+                <p id="logo">
+                  <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span>
+                  <span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span>
+                </p>
+              </a>
+            </div>
+            <div id="navbar" class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li class="active"><a href="Webpage.html#about" onclick="console.log('clicked');">About</a></li>
+                <!--
+                <li class="dropdown">
+                  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Dropdown <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                    <li><a href="#">Action</a></li>
+                    <li><a href="#">Another action</a></li>
+                    <li><a href="#">Something else here</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li class="dropdown-header">Nav header</li>
+                    <li><a href="#">Separated link</a></li>
+                    <li><a href="#">One more separated link</a></li>
+                  </ul>
+                </li>
+                -->
+                <li><a href="Webpage.html#contact">Contact</a></li>
+              </ul>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div id="mapButtons" class="jumbotron" style="margin-top: 0px; padding-bottom: 30px; padding-top: 10px">
+
+        <h2>Search 
+          <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span>
+          <span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span>
+        </h2>
+
+        <p id="choice" style="margin-bottom: 10px; margin-top: 10px">Select the test type to plot:</p>
+        <div class="btn-group" data-toggle="buttons" id="map_colors">
+          <label class="btn btn-primary" onclick="loadMapFG();" id="FG">
+            <input type="radio" name="options" id="option1" checked> FitnessGram
+          </label>
+          <label class="btn btn-primary" onclick="loadMapAS();" id="AS">
+            <input type="radio" name="options" id="option2"> Academic Scores
+          </label>
+        </div>
+        <p id="choice" style="margin-bottom: 10px; margin-top: 10px">Select the student group category to plot:</p>
+        <div class="btn-group" data-toggle="buttons" id="student_groups">
+          <label class="btn btn-primary" onclick="loadMapAll();" id="All">
+            <input type="radio" name="options" id="option1" checked> All
+          </label>
+          <label class="btn btn-primary" onclick="loadMapED();" id="ED">
+            <input type="radio" name="options" id="option2"> Economically Disadvantaged
+          </label>
+          <label class="btn btn-primary" onclick="loadMapNED();" id="NED">
+            <input type="radio" name="options" id="option3"> Not Economically Disadvantaged
+          </label>
+        </div>      
+      
+      </div>
+
+    </div>
+
+    <div id="map" class="container-fluid" style="height: 1060px">
+        <div id="selectedMap" style="height: 1050px"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <div>
+      <footer>
+        <p class="pull-right"><a href="#index">Back to top</a></p>
+        <p>&copy; 2017 <span id="logo_bold">FIT</span><span id='logo_normal'>KIDS |</span><span id="logo_bold">SMART</span><span id='logo_normal'>KIDS</span> &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+      </footer>
+
+    </div><!-- /.container -->
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+
+      function topFunction() {
+          document.body.scrollTop = 0; // For Chrome, Safari and Opera 
+          document.documentElement.scrollTop = 0; // For IE and Firefox
+      }
+
+      function loadMapFG() {
+
+          var map_colors_active = 'FG';
+
+          var student_groups_active = '';
+          $('#student_groups .active').each(function(){
+                student_groups_active= $(this).attr('id'); 
+                  }); 
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (student_groups_active == "All") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "ED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "NED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapAS() {
+
+          var map_colors_active = 'AS';
+
+          var student_groups_active = '';
+          $('#student_groups .active').each(function(){
+                student_groups_active= $(this).attr('id'); 
+                  }); 
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (student_groups_active == "All") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "ED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (student_groups_active == "NED") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapAll() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'All';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_all_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_all_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapED() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'ED';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_Disadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+      function loadMapNED() {
+
+          var map_colors_active = '';
+          $('#map_colors .active').each(function(){
+                map_colors_active= $(this).attr('id'); 
+                  }); 
+
+          var student_groups_active = 'NED';
+
+          console.log(map_colors_active);
+          console.log(student_groups_active);
+
+          if (map_colors_active == "FG") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Fit_Risk_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+          if (map_colors_active == "AS") {
+              document.getElementById("selectedMap").innerHTML='<object width=100% height=100% type="text/html" data="../FitnessGram/Comb_County_Acad_NotDisadv_1.2_wScatterplots.html" ></object>';
+          }
+
+      }
+
+    </script>
+
+  </body>
+</html>
